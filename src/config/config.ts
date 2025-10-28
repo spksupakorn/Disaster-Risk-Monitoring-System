@@ -10,6 +10,8 @@ export class Config {
     name: process.env.DB_NAME || 'disaster_monitoring',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'postgres',
+    sslEnabled: process.env.DB_SSL_ENABLED === 'true',
+    sslRejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false',
   };
 
   public static readonly redis = {

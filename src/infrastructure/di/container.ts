@@ -10,11 +10,6 @@ export async function setupDependencyInjection(): Promise<void> {
   // Register ORM instance
   container.registerInstance('MikroORM', orm);
   
-  // Register a factory that creates a forked EntityManager for each request
-  container.register('EntityManager', {
-    useFactory: () => orm.em.fork(),
-  });
-
   // Migrations are now run manually using: npm run migration:up
   // To auto-run migrations on startup, uncomment the lines below:
   // const migrator = orm.getMigrator();

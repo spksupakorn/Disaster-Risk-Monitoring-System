@@ -292,12 +292,58 @@ docker-compose down -v
 See `.env.example` for all available configuration options:
 
 - **Server**: PORT, NODE_ENV
-- **Database**: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-- **Redis**: REDIS_HOST, REDIS_PORT, REDIS_CACHE_TTL
+- **Database**: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_SSL_ENABLED, DB_SSL_REJECT_UNAUTHORIZED, DB_POOL_MIN, DB_POOL_MAX, DB_POOL_ACQUIRE_TIMEOUT, DB_POOL_IDLE_TIMEOUT
+- **Redis**: REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_CACHE_TTL
 - **APIs**: OPENWEATHER_API_KEY, USGS_API_URL
 - **Messaging**: TWILIO_*, SENDGRID_*
 - **Thresholds**: FLOOD_HIGH_THRESHOLD, EARTHQUAKE_HIGH_THRESHOLD, etc.
 - **Background**: RISK_FETCH_CRON
+
+## 🚀 Production Deployment
+
+### Database Configuration
+
+For production environments, the application supports:
+
+**Connection Pooling:**
+- Configurable pool size (min/max connections)
+- Connection timeout settings
+- Idle connection management
+
+**SSL/TLS Support:**
+- Enable SSL for encrypted database connections
+- Configurable certificate validation
+- Supports cloud providers (AWS RDS, Azure Database, Google Cloud SQL)
+
+**Production Settings:**
+```bash
+# Enable SSL for database connections
+DB_SSL_ENABLED=true
+DB_SSL_REJECT_UNAUTHORIZED=true
+
+# Connection pool optimization
+DB_POOL_MIN=5
+DB_POOL_MAX=20
+DB_POOL_ACQUIRE_TIMEOUT=30000
+DB_POOL_IDLE_TIMEOUT=30000
+```
+
+### Production Checklist
+
+- [ ] Set `NODE_ENV=production`
+- [ ] Use strong database passwords
+- [ ] Enable SSL for database connections
+- [ ] Configure connection pooling based on load
+- [ ] Set up Redis with authentication
+- [ ] Use production API keys for OpenWeather and other services
+- [ ] Configure real Twilio/SendGrid credentials
+- [ ] Set appropriate CORS origins
+- [ ] Enable logging aggregation
+- [ ] Set up health monitoring
+- [ ] Configure auto-scaling if needed
+- [ ] Run database migrations: `npm run migration:up`
+
+See `.env.production.example` for a complete production configuration template.
 
 ## 🤝 Contributing
 
