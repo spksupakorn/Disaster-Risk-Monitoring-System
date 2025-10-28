@@ -11,8 +11,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "migration:create": "mikro-orm migration:create",
-    "migration:up": "mikro-orm migration:up",
-    "migration:down": "mikro-orm migration:down"
+    "migration:up": "ts-node src/infrastructure/database/run-migrations.ts",
+    "migration:down": "mikro-orm migration:down",
+    "db:migrate": "ts-node src/infrastructure/database/run-migrations.ts"
   },
   "keywords": ["disaster", "monitoring", "risk-assessment", "clean-architecture"],
   "author": "",

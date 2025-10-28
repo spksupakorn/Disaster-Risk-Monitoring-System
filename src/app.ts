@@ -7,7 +7,6 @@ import { LoggerService } from './infrastructure/logging/LoggerService';
 import { RedisService } from './infrastructure/cache/RedisService';
 import { BackgroundService } from './infrastructure/background/BackgroundService';
 import { swaggerSpec } from './infrastructure/swagger/swagger';
-import { Config } from './config/config';
 
 export class App {
   public app: Application;
@@ -20,9 +19,6 @@ export class App {
   }
 
   async initialize(): Promise<void> {
-    // Load environment variables
-    require('dotenv').config();
-
     // Setup dependency injection
     await setupDependencyInjection();
 

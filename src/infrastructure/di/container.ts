@@ -1,19 +1,24 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { MikroORM, EntityManager } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
 import mikroOrmConfig from '../database/mikro-orm.config';
 
 export async function setupDependencyInjection(): Promise<void> {
   // Initialize MikroORM
   const orm = await MikroORM.init(mikroOrmConfig);
 
-  // Register ORM and EntityManager
+  // Register ORM instance
   container.registerInstance('MikroORM', orm);
-  container.registerInstance('EntityManager', orm.em);
+  
+  // Register a factory that creates a forked EntityManager for each request
+  container.register('EntityManager', {
+    useFactory: () => orm.em.fork(),
+  });
 
-  // Run migrations
-  const migrator = orm.getMigrator();
-  await migrator.up();
+  // Migrations are now run manually using: npm run migration:up
+  // To auto-run migrations on startup, uncomment the lines below:
+  // const migrator = orm.getMigrator();
+  // await migrator.up();
 }
 
 export { container };
