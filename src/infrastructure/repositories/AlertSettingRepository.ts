@@ -11,13 +11,13 @@ export class AlertSettingRepository extends BaseRepository<AlertSetting> {
   }
 
   async findByRegionAndType(regionId: number, disasterType: DisasterType): Promise<AlertSetting | null> {
-    return this.repository.findOne({ 
+    return this.getRepository().findOne({ 
       region: regionId, 
       disasterType 
     });
   }
 
   async findByRegion(regionId: number): Promise<AlertSetting[]> {
-    return this.repository.find({ region: regionId });
+    return this.getRepository().find({ region: regionId });
   }
 }

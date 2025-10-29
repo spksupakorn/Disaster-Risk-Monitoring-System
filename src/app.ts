@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import swaggerUi from 'swagger-ui-express';
+import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { setupDependencyInjection, container } from './infrastructure/di/container';
 import { setupRoutes } from './presentation/routes';
 import { GlobalExceptionHandler } from './infrastructure/middleware/GlobalExceptionHandler';
@@ -13,6 +14,7 @@ export class App {
   private logger!: LoggerService;
   private redisService!: RedisService;
   private backgroundService!: BackgroundService;
+  private orm!: MikroORM;
 
   constructor() {
     this.app = express();
@@ -26,6 +28,7 @@ export class App {
     this.logger = container.resolve(LoggerService);
     this.redisService = container.resolve(RedisService);
     this.backgroundService = container.resolve(BackgroundService);
+    this.orm = container.resolve<MikroORM>('MikroORM');
 
     // Connect to Redis
     await this.redisService.connect();
@@ -46,6 +49,12 @@ export class App {
   }
 
   private setupMiddleware(): void {
+    // MikroORM RequestContext middleware - MUST be first!
+    // This creates an isolated EntityManager fork for each request
+    this.app.use((req, res, next) => {
+      RequestContext.create(this.orm.em, next);
+    });
+
     // Body parsing middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
@@ -93,6 +102,9 @@ export class App {
 
     // Disconnect from Redis
     await this.redisService.disconnect();
+
+    // Close MikroORM connection
+    await this.orm.close();
 
     this.logger.info('Application shutdown complete');
   }

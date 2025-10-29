@@ -6,6 +6,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
+  setupFiles: ['reflect-metadata'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',

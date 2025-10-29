@@ -10,10 +10,10 @@ export class RegionRepository extends BaseRepository<Region> {
   }
 
   async findByIdWithSettings(id: number): Promise<Region | null> {
-    return this.repository.findOne({ id }, { populate: ['alertSettings'] });
+    return this.getRepository().findOne({ id }, { populate: ['alertSettings'] });
   }
 
   async findAll(): Promise<Region[]> {
-    return this.repository.findAll({ populate: ['alertSettings'] });
+    return this.getRepository().findAll({ populate: ['alertSettings'] });
   }
 }

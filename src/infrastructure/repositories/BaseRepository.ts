@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, AnyEntity } from '@mikro-orm/core';
+import { EntityManager, EntityRepository, AnyEntity, RequestContext } from '@mikro-orm/core';
 
 export interface IRepository<T extends AnyEntity> {
   findById(id: number): Promise<T | null>;
@@ -14,28 +14,42 @@ export abstract class BaseRepository<T extends AnyEntity> implements IRepository
     protected readonly repository: EntityRepository<T>
   ) {}
 
+  // Get the current EntityManager from RequestContext or use the injected one
+  protected getEntityManager(): EntityManager {
+    return RequestContext.getEntityManager() || this.em;
+  }
+
+  // Get the current repository for the entity
+  protected getRepository(): EntityRepository<T> {
+    const entityName = this.repository.getEntityName();
+    return this.getEntityManager().getRepository(entityName) as unknown as EntityRepository<T>;
+  }
+
   async findById(id: number): Promise<T | null> {
-    return this.repository.findOne({ id } as any);
+    return this.getRepository().findOne({ id } as any);
   }
 
   async findAll(): Promise<T[]> {
-    return this.repository.findAll();
+    return this.getRepository().findAll();
   }
 
   async create(entity: T): Promise<T> {
-    await this.em.persistAndFlush(entity);
+    const em = this.getEntityManager();
+    await em.persistAndFlush(entity);
     return entity;
   }
 
   async update(entity: T): Promise<T> {
-    await this.em.flush();
+    const em = this.getEntityManager();
+    await em.flush();
     return entity;
   }
 
   async delete(id: number): Promise<void> {
     const entity = await this.findById(id);
     if (entity) {
-      await this.em.removeAndFlush(entity);
+      const em = this.getEntityManager();
+      await em.removeAndFlush(entity);
     }
   }
 }

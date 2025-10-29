@@ -11,7 +11,7 @@ export class AlertRepository extends BaseRepository<Alert> {
 
   async findLatestByRegion(): Promise<Alert[]> {
     // Get all alerts and group by region, keeping only the latest
-    const allAlerts = await this.repository.findAll({
+    const allAlerts = await this.getRepository().findAll({
       orderBy: { sentAt: 'DESC' },
       populate: ['region'],
     });
@@ -29,7 +29,7 @@ export class AlertRepository extends BaseRepository<Alert> {
   }
 
   async findByRegion(regionId: number, limit: number = 10): Promise<Alert[]> {
-    return this.repository.find(
+    return this.getRepository().find(
       { region: regionId },
       { 
         orderBy: { sentAt: 'DESC' },
